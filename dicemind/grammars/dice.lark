@@ -1,0 +1,34 @@
+%import common.NUMBER
+%import common.WS
+%ignore WS
+
+start : statement (";" statement)* ";"*
+
+?statement: expr | binding
+
+expr: product 
+     | expr "+" product -> add 
+     | expr "-" product -> sub
+
+binding: varname ":=" expr
+
+?product: atom 
+        | product "*" atom -> mul 
+        | product "/" atom -> div
+
+?atom: NUMBER -> number 
+     | "-" atom -> neg
+     | "+" atom -> pos
+     | paren
+     | dice
+     | var
+
+paren: "(" expr ")"
+
+MACRO_NAME: /(?!d\s)[a-zA-Z\-\_]+/
+var: MACRO_NAME
+varname: MACRO_NAME
+
+dice: dice_amount "d" dice_power
+dice_power: [NUMBER]
+dice_amount: [NUMBER]
